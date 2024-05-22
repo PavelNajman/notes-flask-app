@@ -1,0 +1,13 @@
+# core
+flask
+flask-sqlalchemy
+flask-marshmallow
+flask-smorest
+flask-jwt-extended
+
+# testing
+pytest
+
+# production
+gunicorn
+mariadb
