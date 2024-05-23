@@ -7,7 +7,7 @@ class NoteModel(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(1024), unique=False, nullable=False)
     body = db.Column(db.String(8192), unique=False, nullable=True)
-    owner = db.Column(db.String(128), unique=False, nullable=False)
+    owner = db.Column(db.Integer, unique=False, nullable=False)
 
     @classmethod
     def find_by_id(cls, id, owner):

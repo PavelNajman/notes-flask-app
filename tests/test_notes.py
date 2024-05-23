@@ -16,10 +16,10 @@ def app():
 
     with app.app_context():
         global test_user_jwt
-        access_token = create_access_token("test_user", fresh=True)
+        access_token = create_access_token(1, fresh=True)
         test_user_jwt = {"Authorization": "Bearer {}".format(access_token)}
         global other_user_jwt
-        access_token = create_access_token("other_user", fresh=True)
+        access_token = create_access_token(2, fresh=True)
         other_user_jwt = {"Authorization": "Bearer {}".format(access_token)}
 
     yield app
@@ -44,6 +44,7 @@ def check_response(response, expected_status_code):
     assert response.json["id"]
     assert response.json["title"] == "title"
     assert response.json["body"] == "body"
+    assert response.json["owner"]
 
 
 def test_post_note(client):
