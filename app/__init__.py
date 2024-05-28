@@ -8,7 +8,7 @@ db = SQLAlchemy()
 jwt = JWTManager()
 
 
-def create_app(config_name: str):
+def create_app(config_name: str = "default"):
     app = Flask(__name__)
     app.config.from_object(config[config_name])
 
