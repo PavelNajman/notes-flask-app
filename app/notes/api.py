@@ -78,3 +78,18 @@ class NoteList(MethodView):
                 message="An error occured while creating the note.",
             )
         return note
+
+
+@blp.route("/note/page/<int(min=1):limit>/<int:offset>")
+class PaginatedNoteList(MethodView):
+    @jwt_required()
+    @blp.response(HTTPStatus.OK, NoteSchema(many=True))
+    def get(self, limit, offset):
+        """Get paginated notes for the authenticated user.
+        Path parameters:
+            limit (int): Maximum number of notes to return (automatically > 0)
+            offset (int): Number of notes to skip (automatically non-negative)
+        """
+        return NoteModel.get_paginated_notes(
+            owner=get_jwt_identity(), limit=limit, offset=offset
+        )

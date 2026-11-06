@@ -201,3 +201,73 @@ def test_get_all_notes(client):
     assert len(response_4.json) == 2
     assert response_4.json[0] == response_1.json
     assert response_4.json[1] == response_2.json
+
+
+def test_get_paginated_notes(client):
+    """
+    Notes can be retrieved with pagination using /note/page/<limit>/<offset> endpoint.
+    """
+    # Create 5 test notes
+    notes = []
+    for i in range(5):
+        response = make_post_note_request(client)
+        check_response(response, HTTPStatus.CREATED)
+        notes.append(response.json)
+
+    # Get first 2 notes
+    response = client.get("/note/page/2/0", headers=test_user_jwt)
+    assert response.status_code == HTTPStatus.OK
+    assert len(response.json) == 2
+    assert response.json[0] == notes[0]
+    assert response.json[1] == notes[1]
+
+    # Get next 2 notes
+    response = client.get("/note/page/2/2", headers=test_user_jwt)
+    assert response.status_code == HTTPStatus.OK
+    assert len(response.json) == 2
+    assert response.json[0] == notes[2]
+    assert response.json[1] == notes[3]
+
+    # Get remaining notes
+    response = client.get("/note/page/2/4", headers=test_user_jwt)
+    assert response.status_code == HTTPStatus.OK
+    assert len(response.json) == 1
+    assert response.json[0] == notes[4]
+
+
+def test_get_paginated_notes_invalid_limit(client):
+    """
+    A request with invalid limit (< 1) results in 404 error due to URL routing.
+    """
+    response = client.get("/note/page/0/0", headers=test_user_jwt)
+    assert response.status_code == HTTPStatus.NOT_FOUND
+
+
+def test_get_paginated_notes_invalid_offset(client):
+    """
+    A request with negative offset results in 404 error due to Werkzeug's URL routing.
+    """
+    response = client.get("/note/page/1/-1", headers=test_user_jwt)
+    assert response.status_code == HTTPStatus.NOT_FOUND
+
+
+def test_get_paginated_notes_other_user(client):
+    """
+    Pagination only returns notes owned by the requesting user.
+    """
+    # Create note as test user
+    response = make_post_note_request(client)
+    check_response(response, HTTPStatus.CREATED)
+    
+    # Create note as other user
+    response = client.post(
+        "/note", 
+        json={"title": "title", "body": "body"}, 
+        headers=other_user_jwt
+    )
+    check_response(response, HTTPStatus.CREATED)
+
+    # Get paginated notes as test user
+    response = client.get("/note/page/10/0", headers=test_user_jwt)
+    assert response.status_code == HTTPStatus.OK
+    assert len(response.json) == 1  # Only one note belongs to test user

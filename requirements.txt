@@ -4,10 +4,10 @@ flask-sqlalchemy
 flask-marshmallow
 flask-smorest
 flask-jwt-extended
+flask-migrate
 
 # testing
 pytest
 
 # production
 gunicorn
-mariadb

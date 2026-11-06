@@ -46,3 +46,69 @@ docker build -t notes-image .
 ```sh
 docker run --env-file=.env -d -p 8000:8000 notes-image
 ```
+
+## API Documentation
+
+The API provides the following endpoints for note management:
+
+| Endpoint | Method | Description |
+|----------|---------|------------|
+| /note | GET | Retrieve user's notes |
+| /note | POST | Create a new note |
+| /note/<id> | GET | Get a specific note |
+| /note/<id> | PUT | Update a note |
+| /note/<id> | DELETE | Delete a note |
+
+Below are the main API endpoints for managing notes. Replace `<TOKEN>` with your authentication token.
+
+### Get all notes
+
+**GET** `/note`
+
+```sh
+curl -H "Authorization: Bearer <TOKEN>" http://localhost:8000/note
+```
+
+---
+
+### Create a new note
+
+**POST** `/note`
+
+```sh
+curl -X POST -H "Content-Type: application/json" -H "Authorization: Bearer <TOKEN>" \
+    -d '{"title": "Sample Note", "body": "This is a note."}' \
+    http://localhost:8000/note
+```
+
+---
+
+### Get a specific note
+
+**GET** `/note/<id>`
+
+```sh
+curl -H "Authorization: Bearer <TOKEN>" http://localhost:8000/note/1
+```
+
+---
+
+### Update a note
+
+**PUT** `/note/<id>`
+
+```sh
+curl -X PUT -H "Content-Type: application/json" -H "Authorization: Bearer <TOKEN>" \
+    -d '{"title": "Updated Title", "body": "Updated body."}' \
+    http://localhost:8000/note/1
+```
+
+---
+
+### Delete a note
+
+**DELETE** `/note/<id>`
+
+```sh
+curl -X DELETE -H "Authorization: Bearer <TOKEN>" http://localhost:8000/note/1
+```

@@ -4,6 +4,8 @@ import secrets
 
 class Config:
     # flask
+    DEBUG = False
+    TESTING = False
     SECRET_KEY = os.environ.get("SECRET_KEY", secrets.token_hex(16))
 
     # smorest
